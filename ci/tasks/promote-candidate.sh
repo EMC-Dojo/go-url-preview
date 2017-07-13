@@ -8,13 +8,12 @@ export integer_version=`cut -d "." -f1 go-url-preview-version/number`
 cp -r go-url-preview promote/go-url-preview
 echo ${integer_version} > promote/integer_version
 
-pushd promote/go-url-preview
-  git config --global user.email ${GITHUB_EMAIL}
-  git config --global user.name ${GITHUB_USER}
-  git config --global push.default simple
+cd promote/go-url-preview
+git config --global user.email ${GITHUB_EMAIL}
+git config --global user.name ${GITHUB_USER}
+git config --global push.default simple
 
-  echo "${integer_version}.0.0" > ci/version
-  git add ci/version
+echo "${integer_version}.0.0" > ci/version
+git add ci/version
 
-  git commit -m ":airplane: New final release v${integer_version}" -m "[ci skip]"
-popd
+git commit -m ":airplane: New final release v${integer_version}" -m "[ci skip]"
