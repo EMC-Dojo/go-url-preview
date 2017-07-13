@@ -1,0 +1,74 @@
+resources:
+- name: go-url-preview
+  type: git    
+  source: &github-secrets
+    branch: master
+    uri: http://github.com/emc-dojo/go-url-preview
+    username: {{github_user}}
+    password: {{github_password}}
+    skip_ssl_verification: true
+
+- name: go-url-preview-version
+  type: semver
+  source:
+    <<: *github-secrets
+    driver: git
+    file: ci/version
+    
+jobs:
+- name: ginkgo-unit
+  serial: true
+  plan:
+  - aggregate:
+    - get: go-url-preview
+      trigger: true
+  - task: ginkgo-unit
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          insecure_registries:
+          - 10.100.0.5:5000
+          repository: 10.100.0.5:5000/nextgen-report
+      run:
+        path: go-url-preview/ci/tasks/ginkgo.sh
+      inputs:
+      - name: go-url-preview
+- name: promote
+  serial: true
+  plan:
+  - aggregate:
+    - get: go-url-preview
+      passed:
+      - push-to-test-cf
+      trigger: true
+    - get: go-url-preview-version
+      params:
+        bump: major
+  - task: promote
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          insecure_registries:
+          - 10.100.0.5:5000
+          repository: 10.100.0.5:5000/nextgen-report
+      params:
+        GITHUB_EMAIL: EMCdojo@emc.com
+        GITHUB_USER: Emc-Dojo-Concourse
+        REPO_NAME: go-url-preview
+      run:
+        path: go-url-preview/ci/tasks/promote-candidate.sh
+      inputs:
+      - name: go-url-preview
+      - name: go-url-preview-version
+      outputs:
+      - name: promote
+  - put: go-url-preview
+    params:
+      rebase: true
+      repository: promote/go-url-preview
+      tag: promote/integer_version
+      tag_prefix: v
