@@ -12,7 +12,7 @@ will return
 
 Enjoy!
 
-###Installing
+### Installing
 
 You'll need [Go 1.7+](https://golang.org/dl/), and [glide](https://github.com/Masterminds/glide). Install Go, install glide, and navigate to this directory.
 
