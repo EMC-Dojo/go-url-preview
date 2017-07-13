@@ -3,9 +3,6 @@ import:
 - package: golang.org/x/net
   subpackages:
   - html
-- package: github.com/onsi/ginkgo
-  subpackages:
-  - ginkgo
 - package: github.com/onsi/gomega
 - package: github.com/golang/protobuf
   subpackages:

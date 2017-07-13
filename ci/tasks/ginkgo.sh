@@ -6,6 +6,5 @@ cp -r go-url-preview $GOPATH/src/github.com/EMC-Dojo/
 
 cd $GOPATH/src/github.com/EMC-Dojo/go-url-preview
 
-glide install
 glide up
 ginkgo .

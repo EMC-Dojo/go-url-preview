@@ -4,3 +4,5 @@ RUN apk update && \
     apk add git && \
     apk add glide && \
     mkdir -p $GOPATH/src/github.com/EMC-Dojo
+
+RUN go get github.com/onsi/ginkgo/ginkgo  # installs the ginkgo CLI
