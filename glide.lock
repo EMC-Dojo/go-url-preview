@@ -1,0 +1,19 @@
+hash: 35fe34199c4bf792ef1c76a14361e67e4dfd5743125f8268d1eca64cb31fd913
+updated: 2017-07-13T14:28:02.104300612-04:00
+imports:
+- name: github.com/golang/protobuf
+  version: 0a4f71a498b7c4812f64969510bcb4eca251e33a
+  subpackages:
+  - proto
+- name: github.com/onsi/ginkgo
+  version: 1e72798a2620664d2ab32ffd4473c102fcd4894d
+  subpackages:
+  - ginkgo
+- name: github.com/onsi/gomega
+  version: c990b8b3a34c8814a6657daebe8e19ff4d9647a1
+- name: golang.org/x/net
+  version: f01ecb60fe3835d80d9a0b7b2bf24b228c89260e
+  subpackages:
+  - html
+  - html/atom
+devImports: []
