@@ -7,4 +7,4 @@ cf auth $CF_USERNAME "${CF_PASSWORD}"
 cf target -o $CF_ORG -s $CF_SPACE
 
 cd go-url-preview
-cf push
+cf push gourlpreview-test
