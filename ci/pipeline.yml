@@ -14,7 +14,7 @@ resources:
     <<: *github-secrets
     driver: git
     file: ci/version
-    
+
 jobs:
 - name: ginkgo-unit
   serial: true
@@ -28,13 +28,55 @@ jobs:
       image_resource:
         type: docker-image
         source:
-          insecure_registries:
-          - 10.100.0.5:5000
-          repository: 10.100.0.5:5000/nextgen-report
+          repository: emcdojo/gourlpreview
       run:
         path: go-url-preview/ci/tasks/ginkgo.sh
       inputs:
       - name: go-url-preview
+
+- name: push-to-test-cf
+  serial: true
+  plan:
+  - aggregate:
+    - get: go-url-preview
+      trigger: true
+      passed: [ginkgo-unit]
+  - task: push-to-test-cf
+    config:
+      <<: *docker
+      inputs:
+      - name: go-url-preview
+      run:
+        path: go-url-preview/ci/tasks/push-to-test-cf.sh
+      params:
+        CF_ENDPOINT:              {{cf_test_endpoint}}
+        CF_USERNAME:              {{cf_test_username}}
+        CF_PASSWORD:              {{cf_test_password}}
+        CF_ORG:                   {{cf_test_org}}
+        CF_SPACE:                 {{cf_test_space}}
+
+
+- name: push-to-cf
+  serial: true
+  plan:
+  - aggregate:
+    - get: go-url-preview
+      trigger: false
+      passed: [push-to-test-cf]
+  - task: push-to-cf
+    config:
+      <<: *docker
+      inputs:
+      - name: go-url-preview
+      run:
+        path: go-url-preview/ci/tasks/push-to-cf.sh
+      params:
+        CF_ENDPOINT:              {{cf_test_endpoint}}
+        CF_USERNAME:              {{cf_test_username}}
+        CF_PASSWORD:              {{cf_test_password}}
+        CF_ORG:                   {{cf_test_org}}
+        CF_SPACE:                 {{cf_test_space}}
+
 - name: promote
   serial: true
   plan:
@@ -52,9 +94,7 @@ jobs:
       image_resource:
         type: docker-image
         source:
-          insecure_registries:
-          - 10.100.0.5:5000
-          repository: 10.100.0.5:5000/nextgen-report
+          repository: 
       params:
         GITHUB_EMAIL: EMCdojo@emc.com
         GITHUB_USER: Emc-Dojo-Concourse
